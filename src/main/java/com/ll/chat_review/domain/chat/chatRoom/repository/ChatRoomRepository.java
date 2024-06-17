@@ -1,25 +1,10 @@
 package com.ll.chat_review.domain.chat.chatRoom.repository;
 
 import com.ll.chat_review.domain.chat.chatRoom.entity.ChatRoom;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Repository
-public class ChatRoomRepository {
-    private long lastChatRoomId = 0;
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-    private List<ChatRoom> chatRooms = new ArrayList<>();
-
-    public ChatRoom save(ChatRoom chatRoom) {
-        chatRoom.setId(++lastChatRoomId);
-        chatRooms.add(chatRoom);
-
-        return chatRoom;
-    }
-
-    public List<ChatRoom> findAll() {
-        return chatRooms;
-    }
 }
