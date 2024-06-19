@@ -79,4 +79,19 @@ public class ChatRoomController {
                 new WriterResponseBody(chatMessage.getId())
         );
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class GetMessagesAfterResponseBody {
+
+    }
+
+    @GetMapping("/{roomId}/messagesAfter/{formChatMessageId}")
+    @ResponseBody
+    public RsData<GetMessagesAfterResponseBody> getMessagesAfter(
+            @PathVariable("roomId") final long roomId,
+            @PathVariable("formChatMessageId") final long formChatMessageId
+    ) {
+        return null;
+    }
 }
