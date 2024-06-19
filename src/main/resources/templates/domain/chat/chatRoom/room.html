@@ -5,6 +5,8 @@
     <a href="list">채팅방 목록</a>
 </div>
 
+<a onclick="return false;" href="https://www.naver.com">네이버로 이동</a>
+
 <form onsubmit="submitWriteForm(this); return false;" method="POST">
     <input type="text" name="writerName" placeholder="작성자 명">
     <input type="text" name="content" placeholder="내용">
@@ -22,14 +24,11 @@
     </ul>
 </div>
 
-<!--ajax 방식-->
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 0;
 </script>
 
-<!-- 자바스크립트 유효성 검사 -->
 <script>
-    // 작성자 명, 내용 입력 안하면 alert
     function submitWriteForm(form) {
         form.writerName.value = form.writerName.value.trim();
 
@@ -53,15 +52,24 @@
             action,
             {
                 method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
+                headers:  {
+                    'accept' : 'application/json',
+                    'Content-Type' : 'application/json',
                 },
                 body: JSON.stringify({
                     writerName: form.writerName.value,
                     content: form.content.value,
                 }),
             }
-        );
+        ).then(
+            response => response.json()
+        ).then(
+            json => {
+                if(json.msg) alert(json.msg);
+            }
+        ).catch(error => alert(error));
+
+        form.content.value = '';
+        form.content.focus();
     }
 </script>

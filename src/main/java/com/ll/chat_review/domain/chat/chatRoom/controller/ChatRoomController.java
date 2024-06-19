@@ -3,6 +3,7 @@ package com.ll.chat_review.domain.chat.chatRoom.controller;
 import com.ll.chat_review.domain.chat.chatRoom.entity.ChatMessage;
 import com.ll.chat_review.domain.chat.chatRoom.entity.ChatRoom;
 import com.ll.chat_review.domain.chat.chatRoom.service.ChatRoomService;
+import com.ll.chat_review.global.rsData.RsData;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,11 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     @GetMapping("/{roomId}")
-    public String showRoom(@PathVariable("roomId") final long roomId,
-                           @RequestParam(value = "writerName", defaultValue = "NoName") final String writerName,
-                           Model model) {
+    public String showRoom(
+            @PathVariable("roomId") final long roomId,
+            @RequestParam(value = "writerName", defaultValue = "NoName") final String writerName,
+            Model model
+    ) {
         ChatRoom room = chatRoomService.findById(roomId).get();
         model.addAttribute("room", room);
 
@@ -35,17 +38,17 @@ public class ChatRoomController {
     }
 
     @PostMapping("/make")
-    public String showMake(@RequestParam(value = "name", defaultValue = "") final String name) {
+    public String make(
+            @RequestParam(value = "name") final String name
+    ) {
         chatRoomService.make(name);
-
         return "redirect:/chat/room/list";
     }
 
     @GetMapping("/list")
     public String showList(Model model) {
-        List<ChatRoom> chatRooms = this.chatRoomService.findAll();
+        List<ChatRoom> chatRooms = chatRoomService.findAll();
         model.addAttribute("chatRooms", chatRooms);
-
         return "domain/chat/chatRoom/list";
     }
 
@@ -56,7 +59,7 @@ public class ChatRoomController {
         private String content;
     }
 
-    @Setter
+    @Getter
     @AllArgsConstructor
     public static class WriterResponseBody {
         private Long chatMessageId;
@@ -64,12 +67,16 @@ public class ChatRoomController {
 
     @PostMapping("/{roomId}/write")
     @ResponseBody
-    public WriterResponseBody write(@PathVariable("roomId") final Long roomId,
-                                    @RequestBody final WriterRequestBody requestBody) {
-
+    public RsData<WriterResponseBody> write(
+            @PathVariable("roomId") final long roomId,
+            @RequestBody final WriterRequestBody requestBody
+    ) {
         ChatMessage chatMessage = chatRoomService.write(roomId, requestBody.getWriterName(), requestBody.getContent());
 
-        return new WriterResponseBody((chatMessage.getId()));
+        return RsData.of(
+                "S-1",
+                "%d번 메시지를 작성하였습니다.".formatted(chatMessage.getId()),
+                new WriterResponseBody(chatMessage.getId())
+        );
     }
-
 }
